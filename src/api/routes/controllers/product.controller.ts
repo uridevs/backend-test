@@ -1,9 +1,10 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { productService } from "../../services/product.service";
 
 export const getSimilarProductsHandler = async (
   req: Request,
-  res: Response
+  res: Response,
+  next: NextFunction
 ) => {
   try {
     const { productId } = req.params;
@@ -18,8 +19,6 @@ export const getSimilarProductsHandler = async (
 
     res.status(200).json(similarProducts);
   } catch (error) {
-    // TODO handle errors
-    console.error("[ProductController] Error:", error);
-    res.status(500).json({ message: "Error interno del servidor" });
+    next(error);
   }
 };

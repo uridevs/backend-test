@@ -1,36 +1,47 @@
-class ProductService {
-  /**
-   * Get similar products for a given ID
-   * @param productId - Product ID.
-   */
+import { Product } from "../../interfaces/product.interface";
+import { productClient } from "../dal/product.client";
 
+class ProductService {
   public async getSimilarProducts(productId: string) {
     console.log(`[ProductService] Iniciando búsqueda para: ${productId}`);
 
-    // const similarIds = await productClient.getSimilarProductIds(productId);
+    const similarIds = await productClient.getSimilarProductIds(productId);
 
-    // if (!similarIds || similarIds.length === 0) {
-    //   return [];
-    // }
+    if (!similarIds || similarIds.length === 0) {
+      console.log(
+        `[ProductService] No se encontraron IDs similares para: ${productId}`
+      );
+      return [];
+    }
 
-    // const productDetails = await ... (Promise.allSettled)
+    console.log(
+      `[ProductService] IDs encontrados: ${similarIds.join(", ")}. Obteniendo detalles...`
+    );
 
-    const mockData = [
-      {
-        id: "123",
-        name: "Producto Falso 1 (desde Servicio)",
-        price: 10.0,
-        availability: true,
-      },
-      {
-        id: "456",
-        name: "Producto Falso 2 (desde Servicio)",
-        price: 20.0,
-        availability: false,
-      },
-    ];
+    const productDetailPromises = similarIds.map((id) =>
+      productClient.getProductDetails(id)
+    );
 
-    return mockData;
+    const results = await Promise.allSettled(productDetailPromises);
+
+    const successfulProducts: Product[] = [];
+    results.forEach((result, index) => {
+      if (result.status === "fulfilled") {
+        successfulProducts.push(result.value);
+      } else {
+        const failedId = similarIds[index];
+        console.warn(
+          `[ProductService] Error al obtener detalle para ID ${failedId}:`,
+          result.reason?.message || "Error desconocido"
+        );
+      }
+    });
+
+    console.log(
+      `[ProductService] Detalles de ${successfulProducts.length} productos obtenidos exitosamente.`
+    );
+
+    return successfulProducts;
   }
 }
 
