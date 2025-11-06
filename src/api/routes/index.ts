@@ -1,8 +1,8 @@
 import { Router } from "express";
 import productRouter from "./product.routes";
 
-const apiV1Router = Router();
+const mainRouter = Router();
 
-apiV1Router.use("/products", productRouter);
+mainRouter.use("/product", productRouter);
 
-export default apiV1Router;
+export default mainRouter;

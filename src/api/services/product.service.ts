@@ -3,19 +3,17 @@ import { productClient } from "../dal/product.client";
 
 class ProductService {
   public async getSimilarProducts(productId: string) {
-    console.log(`[ProductService] Iniciando búsqueda para: ${productId}`);
-
     const similarIds = await productClient.getSimilarProductIds(productId);
 
     if (!similarIds || similarIds.length === 0) {
       console.log(
-        `[ProductService] No se encontraron IDs similares para: ${productId}`
+        `[ProductService] Similar IDs were not found for: ${productId}`
       );
       return [];
     }
 
     console.log(
-      `[ProductService] IDs encontrados: ${similarIds.join(", ")}. Obteniendo detalles...`
+      `[ProductService] IDs found: ${similarIds.join(", ")}. Getting details...`
     );
 
     const productDetailPromises = similarIds.map((id) =>
@@ -31,14 +29,14 @@ class ProductService {
       } else {
         const failedId = similarIds[index];
         console.warn(
-          `[ProductService] Error al obtener detalle para ID ${failedId}:`,
-          result.reason?.message || "Error desconocido"
+          `[ProductService] Error obtaining details for ID ${failedId}:`,
+          result.reason?.message || "Unknown Error"
         );
       }
     });
 
     console.log(
-      `[ProductService] Detalles de ${successfulProducts.length} productos obtenidos exitosamente.`
+      `[ProductService] Details of ${successfulProducts.length} products successfully obtained.`
     );
 
     return successfulProducts;

@@ -7,7 +7,7 @@ export const globalErrorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  console.error("[GlobalErrorHandler] Error capturado:", err.message);
+  console.error("[GlobalErrorHandler] Captured error:", err.message);
 
   if (err instanceof ApiError) {
     return res.status(err.statusCode).json({
@@ -18,6 +18,6 @@ export const globalErrorHandler = (
 
   return res.status(500).json({
     status: "error",
-    message: "Error interno del servidor",
+    message: "Internal Server Error",
   });
 };

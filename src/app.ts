@@ -1,5 +1,5 @@
 import express, { Application, Request, Response } from "express";
-import apiV1Router from "./api/routes/index";
+import mainRouter from "./api/routes/index";
 import { NotFoundError } from "./utils/errors";
 import { globalErrorHandler } from "./utils/errorHandler";
 
@@ -14,7 +14,7 @@ app.get("/health", (req: Request, res: Response) => {
   res.status(200).json({ status: "UP" });
 });
 
-app.use("/api/v1", apiV1Router);
+app.use("/", mainRouter);
 
 app.use((req, res, next) => {
   next(new NotFoundError(`Route not found: ${req.method} ${req.originalUrl}`));

@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosError } from "axios";
+import axiosRetry from "axios-retry";
 import { config } from "../../config";
 import { Product, SimilarProductIds } from "../../interfaces/product.interface";
 import { NotFoundError } from "../../utils/errors";
@@ -13,6 +14,21 @@ class ProductClient {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
+      },
+    });
+
+    axiosRetry(this.client, {
+      retries: 3,
+
+      retryDelay: (retryCount) => {
+        console.log(
+          `[ProductClient] Retry number: ${retryCount} para ${config.mockApiUrl}. Waiting...`
+        );
+        return retryCount * 1000;
+      },
+
+      retryCondition: (error) => {
+        return axiosRetry.isNetworkOrIdempotentRequestError(error);
       },
     });
   }

@@ -10,9 +10,7 @@ export const getSimilarProductsHandler = async (
     const { productId } = req.params;
 
     if (!productId) {
-      return res
-        .status(400)
-        .json({ message: "Error: productId es requerido." });
+      return res.status(400).json({ message: "Error: productId is required." });
     }
 
     const similarProducts = await productService.getSimilarProducts(productId);
